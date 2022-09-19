@@ -1,3 +1,7 @@
+# Locally generated files
+generated
+output
+
 lib-cov
 *.seed
 *.log

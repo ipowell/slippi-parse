@@ -87,4 +87,4 @@ techFrames.forEach((techFrame) => {
 
 console.log(`Teched on frames ${techFrames.join(', ')}`);
 
-writeFileSync("./combos.json", JSON.stringify(dolphin))
+writeFileSync("output/clips.json", JSON.stringify(dolphin))
