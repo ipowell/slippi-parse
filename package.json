@@ -1,0 +1,10 @@
+{
+    "name": "yourapp",
+    "version": "0.0.1",
+    "dependencies": {
+        "@slippi/slippi-js": "6.3.0"
+    },
+    "devDependencies": {
+        "@types/node": "^18.7.18"
+    }
+}
