@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 
-import { SlippiGame, characters, stages, isTeching } from "@slippi/slippi-js";
+import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType } from "@slippi/slippi-js";
 
 const game = new SlippiGame("test.slp");
 
@@ -11,14 +11,6 @@ type Dolphin = {
     outputOverlayFiles: boolean,
     queue: Clip[],
 }
-
-let dolphin: Dolphin = {
-    mode: 'queue',
-    replay: '',
-    isRealTimeMode: false,
-    outputOverlayFiles: false,
-    queue: []
-};
 
 // Get game settings – stage, characters, etc
 const settings = game.getSettings()!;
@@ -32,30 +24,24 @@ const stage = stages.getStageName(settings.stageId!);
 
 console.log(`This game is ${p1} vs ${p2} on ${stage}.`);
 
-// Get metadata - start time, platform played on, etc
 const metadata = game.getMetadata()!;
-// console.log(metadata);
 
-// Get computed stats - openings / kill, conversions, etc
 const stats = game.getStats()!;
-// console.log(stats);
 
 // Get frames – animation state, inputs, etc
 // This is used to compute your own stats or get more frame-specific info (advanced)
 const allFrames = game.getFrames()!;
 
-let techFrames: number[] = []
+type EventTest = (allFrames: FramesType, currentFrameIndex: number) => boolean;
 
-let currentFrame = allFrames[0];
-let previousFrame = allFrames[-1];
-while (currentFrame) {
-    const didTech = isTeching(currentFrame.players[1]!.post.actionStateId!)
-        && !isTeching(previousFrame.players[1]!.post.actionStateId!);
-    if (didTech) {
-        techFrames.push(currentFrame.frame);
+function findOccurrences(test: EventTest): number[] {
+    let occurrenceFrames: number[] = []
+    for (let i = 0; i < metadata.lastFrame!; i++) {
+        if (test(allFrames, i)) {
+            occurrenceFrames.push(i);
+        }
     }
-    previousFrame = currentFrame;
-    currentFrame = allFrames[currentFrame.frame + 1];
+    return occurrenceFrames
 }
 
 type Clip = {
@@ -67,24 +53,62 @@ type Clip = {
     additional: any,
 }
 
-techFrames.forEach((techFrame) => {
-    let x: Clip = {
-        path: '/Users/ianpowell/Development/personal/slippi-parse/test.slp',
-        startFrame: techFrame - 240 > -123 ? techFrame - 240 : -123,
-        endFrame: techFrame + 180 < metadata.lastFrame! ? techFrame + 180 : metadata.lastFrame!,
-        gameStartAt: "", // _.get(metadata, "startAt", ""),
-        gameStation: "", // _.get(metadata, "consoleNick", ""),
-        additional: {
-            characterId: player.characterId,
-            opponentCharacterId: opponent.characterId,
+function createDolphinDataFromFrames(frames: number[]): Dolphin {
+    return {
+        mode: 'queue',
+        replay: '',
+        isRealTimeMode: false,
+        outputOverlayFiles: false,
+        queue: frames.map((frame: number): Clip => {
+            return {
+                path: '/Users/ianpowell/Development/personal/slippi-parse/test.slp',
+                startFrame: frame - 240 > -123 ? frame - 240 : -123,
+                endFrame: frame + 180 < metadata.lastFrame! ? frame + 180 : metadata.lastFrame!,
+                gameStartAt: "", // _.get(metadata, "startAt", ""),
+                gameStation: "", // _.get(metadata, "consoleNick", ""),
+                additional: {
+                    characterId: player.characterId,
+                    opponentCharacterId: opponent.characterId,
+                }
+            }
         }
+        )
     };
 
-    dolphin.queue.push(x);
+
+}
+
+function writeDolphinFile(dolphin: Dolphin, filename: string) {
+    let file = `output/${filename}.json`;
+    writeFileSync(file, JSON.stringify(dolphin))
+    console.log(`wrote file to ${file}`)
+}
+
+let teched: Occurrence = {
+    test: function (allFrames: FramesType, currentFrameIndex: number) {
+        let frame = allFrames[currentFrameIndex]
+        let previousFrame = allFrames[currentFrameIndex - 1]
+        return isTeching(frame.players[1]!.post.actionStateId!)
+            && !isTeching(previousFrame.players[1]!.post.actionStateId!)
+    },
+    description: `Teched`,
+    filename: `techs`,
+}
+
+type Occurrence = {
+    test: EventTest
+    description: string,
+    filename: string,
+}
+
+let occurrences: Occurrence[] = [
+    teched,
+]
+
+occurrences.forEach((occurrence) => {
+    let frames = findOccurrences(occurrence.test)
+    console.log(`${occurrence.description} on frames ${frames}`)
+    writeDolphinFile(createDolphinDataFromFrames(frames), occurrence.filename);
 });
 
 
-
-console.log(`Teched on frames ${techFrames.join(', ')}`);
-
-writeFileSync("output/clips.json", JSON.stringify(dolphin))
