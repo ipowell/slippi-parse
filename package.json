@@ -2,7 +2,8 @@
     "name": "yourapp",
     "version": "0.0.1",
     "dependencies": {
-        "@slippi/slippi-js": "6.3.0"
+        "@slippi/slippi-js": "6.3.0",
+        "dotenv": "^16.0.2"
     },
     "devDependencies": {
         "@types/node": "^18.7.18",

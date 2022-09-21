@@ -2,6 +2,8 @@ import { writeFileSync } from 'fs';
 
 import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType } from "@slippi/slippi-js";
 
+require('dotenv').config();
+
 const game = new SlippiGame("test.slp");
 
 type Dolphin = {
@@ -32,9 +34,9 @@ const stats = game.getStats()!;
 // This is used to compute your own stats or get more frame-specific info (advanced)
 const allFrames = game.getFrames()!;
 
-type EventTest = (allFrames: FramesType, currentFrameIndex: number) => boolean;
+type EventPredicate = (allFrames: FramesType, currentFrameIndex: number) => boolean;
 
-function findOccurrences(test: EventTest): number[] {
+function findOccurrences(test: EventPredicate): number[] {
     let occurrenceFrames: number[] = []
     for (let i = 0; i < metadata.lastFrame!; i++) {
         if (test(allFrames, i)) {
@@ -49,11 +51,11 @@ type Clip = {
     startFrame: number,
     endFrame: number,
     gameStartAt: string,
-    gameStation: string,
-    additional: any,
+    // gameStation: string,
+    // additional: any,
 }
 
-function createDolphinDataFromFrames(frames: number[]): Dolphin {
+function createDolphinDataFromFrames(frames: number[], leadingFrames: number = 180, trailingFrames: number = 240,): Dolphin {
     return {
         mode: 'queue',
         replay: '',
@@ -61,16 +63,19 @@ function createDolphinDataFromFrames(frames: number[]): Dolphin {
         outputOverlayFiles: false,
         queue: frames.map((frame: number): Clip => {
             return {
-                path: '/Users/ianpowell/Development/personal/slippi-parse/test.slp',
-                startFrame: frame - 240 > -123 ? frame - 240 : -123,
-                endFrame: frame + 180 < metadata.lastFrame! ? frame + 180 : metadata.lastFrame!,
-                gameStartAt: "", // _.get(metadata, "startAt", ""),
-                gameStation: "", // _.get(metadata, "consoleNick", ""),
-                additional: {
-                    characterId: player.characterId,
-                    opponentCharacterId: opponent.characterId,
-                }
+                // TODO: find a better way of inferring this path
+                path: process.env.BASE_DIR + '/test.slp',
+                startFrame: Math.max(frame - leadingFrames, -123),
+                endFrame: Math.min(frame + trailingFrames, metadata.lastFrame!),
+                // gameStartAt: "", // _.get(metadata, "startAt", ""),
+                // gameStation: "", // _.get(metadata, "consoleNick", ""),
+                // additional: {
+                //     characterId: player.characterId,
+                //     opponentCharacterId: opponent.characterId,
+                // }
+                gameStartAt: "09/04/22 7:56 am",
             }
+
         }
         )
     };
@@ -85,7 +90,7 @@ function writeDolphinFile(dolphin: Dolphin, filename: string) {
 }
 
 let teched: Occurrence = {
-    test: function (allFrames: FramesType, currentFrameIndex: number) {
+    predicate: function (allFrames: FramesType, currentFrameIndex: number) {
         let frame = allFrames[currentFrameIndex]
         let previousFrame = allFrames[currentFrameIndex - 1]
         return isTeching(frame.players[1]!.post.actionStateId!)
@@ -96,7 +101,7 @@ let teched: Occurrence = {
 }
 
 type Occurrence = {
-    test: EventTest
+    predicate: EventPredicate
     description: string,
     filename: string,
 }
@@ -106,9 +111,9 @@ let occurrences: Occurrence[] = [
 ]
 
 occurrences.forEach((occurrence) => {
-    let frames = findOccurrences(occurrence.test)
+    let frames = findOccurrences(occurrence.predicate)
     console.log(`${occurrence.description} on frames ${frames}`)
-    writeDolphinFile(createDolphinDataFromFrames(frames), occurrence.filename);
+    writeDolphinFile(createDolphinDataFromFrames(frames, 30, 30), occurrence.filename);
 });
 
 
