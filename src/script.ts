@@ -1,10 +1,14 @@
 import { writeFileSync } from 'fs';
 
-import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType } from "@slippi/slippi-js";
+import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType, PlayerType } from "@slippi/slippi-js";
+import { OccurrenceFinder } from './utils';
+import { findRests } from './rests';
+
+
 
 require('dotenv').config();
 
-const game = new SlippiGame("test.slp");
+const game = new SlippiGame("resources/singles_puff.slp");
 
 type Dolphin = {
     mode: string,
@@ -14,10 +18,18 @@ type Dolphin = {
     queue: Clip[],
 }
 
+function playerIsJigglypuff(player: PlayerType) {
+    return player.characterId == 15
+}
+
+
 // Get game settings – stage, characters, etc
 const settings = game.getSettings()!;
 const p1 = characters.getCharacterShortName(settings.players[0].characterId!);
 const p2 = characters.getCharacterShortName(settings.players[1].characterId!);
+
+const jigglypuffs: PlayerType[] = settings.players.filter(playerIsJigglypuff);
+
 
 const player = settings.players[1]!
 const opponent = settings.players[0]!
@@ -89,31 +101,23 @@ function writeDolphinFile(dolphin: Dolphin, filename: string) {
     console.log(`wrote file to ${file}`)
 }
 
-let teched: Occurrence = {
-    predicate: function (allFrames: FramesType, currentFrameIndex: number) {
-        let frame = allFrames[currentFrameIndex]
-        let previousFrame = allFrames[currentFrameIndex - 1]
-        return isTeching(frame.players[1]!.post.actionStateId!)
-            && !isTeching(previousFrame.players[1]!.post.actionStateId!)
-    },
-    description: `Teched`,
-    filename: `techs`,
+let restFinder: OccurrenceFinder = {
+    parser: findRests,
+    description: "landed rests",
+    filename: "landed_rests"
 }
 
-type Occurrence = {
-    predicate: EventPredicate
-    description: string,
-    filename: string,
-}
-
-let occurrences: Occurrence[] = [
-    teched,
+let occurrentFinders: OccurrenceFinder[] = [
+    restFinder
 ]
 
-occurrences.forEach((occurrence) => {
-    let frames = findOccurrences(occurrence.predicate)
+
+
+occurrentFinders.forEach((occurrence) => {
+    let frames = occurrence.parser(game)
     console.log(`${occurrence.description} on frames ${frames}`)
-    writeDolphinFile(createDolphinDataFromFrames(frames, 30, 30), occurrence.filename);
+    writeDolphinFile(createDolphinDataFromFrames(frames), occurrence.filename);
 });
+
 
 
