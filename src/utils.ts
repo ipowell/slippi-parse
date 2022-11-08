@@ -29,6 +29,33 @@ export function isResting(frame: FrameEntryType, puff: PlayerType) {
     return restStates.includes(actionStateId)
 }
 
-export function isHitByRest(frame: FrameEntryType, notPuff: PlayerType) {
-    return true
+function didHit(frame: FrameEntryType, attacker: PlayerType, attackee: PlayerType) {
+    return frame.players[attackee.playerIndex].post.lastHitBy == attacker.playerIndex
+}
+
+function tookDamageThisFrame(frames: FramesType, frame: FrameEntryType, player: PlayerType) {
+    const nextFrame = frames[frame.frame + 1]
+    return frame.players[player.playerIndex].pre.percent < nextFrame.players[player.playerIndex].pre.percent
+}
+
+function wasLastHitBySomeoneElse(frame: FrameEntryType, attacker: PlayerType, attackee: PlayerType) {
+    return frame.players[attackee.playerIndex].post.lastHitBy != attacker.playerIndex
+}
+
+export function isHitByRest(frames: FramesType, frame: FrameEntryType, puff: PlayerType, notPuff: PlayerType) {
+    return (
+        isResting(frame, puff) &&
+        didHit(frame, puff, notPuff) &&
+        tookDamageThisFrame(frames, frame, notPuff)
+    )
+}
+
+export function isPassedIntoRest(frames: FramesType, frame: FrameEntryType, puff: PlayerType, notPuff: PlayerType) {
+    const previousFrame = frames[frame.frame - 1]
+    return (
+        isResting(frame, puff) &&
+        wasLastHitBySomeoneElse(previousFrame, puff, notPuff) &&
+        didHit(frame, puff, notPuff) &&
+        tookDamageThisFrame(frames, frame, notPuff)
+    )
 }

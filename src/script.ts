@@ -51,13 +51,18 @@ const allFrames = game.getFrames()!;
 
 // for (let i = 0; i < metadata.lastFrame!; i++) {
 //     let frame = allFrames[i]
-//     let info = "Frame " + i + ": "
+//     let secondsElapsed = i / 60
+//     let minutesElapsed = Math.ceil(secondsElapsed / 60)
+//     let timeRemaining = (8 - minutesElapsed) + ":" + ((60 - secondsElapsed % 60) % 60).toPrecision(4)
+//     let info = "Frame " + i + " @ " + timeRemaining
 
 //     settings.players.forEach((player: PlayerType, index: number, array: PlayerType[]) => {
 //         let name = characters.getCharacterShortName(player.characterId!);
 //         let state = frame.players[index].post.actionStateId
 //         let percent = frame.players[index].pre.percent
-//         info = info + name + " state " + state + " " + percent + "%, "
+//         let lastHitBy = frame.players[index].post.lastHitBy
+
+//         info = info + ", " + name + " state " + state + " " + percent.toPrecision(3) + "% by " + lastHitBy
 //     })
 //     console.log(info)
 // }
