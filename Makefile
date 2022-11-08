@@ -13,4 +13,4 @@ run-js:
 
 # set these values in your .env
 play:
-	${DOLPHIN} -e ${MELEE} -i output/techs.json
+	${DOLPHIN} -e ${MELEE} -i output/landed_rests.json

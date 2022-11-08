@@ -3,12 +3,15 @@ import { writeFileSync } from 'fs';
 import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType, PlayerType } from "@slippi/slippi-js";
 import { OccurrenceFinder } from './utils';
 import { findRests } from './rests';
+import console = require('console');
 
 
 
 require('dotenv').config();
 
-const game = new SlippiGame("resources/singles_puff.slp");
+const filename = "resources/doubles_puff.slp"
+
+const game = new SlippiGame(filename);
 
 type Dolphin = {
     mode: string,
@@ -18,21 +21,19 @@ type Dolphin = {
     queue: Clip[],
 }
 
-function playerIsJigglypuff(player: PlayerType) {
-    return player.characterId == 15
-}
-
-
-// Get game settings – stage, characters, etc
 const settings = game.getSettings()!;
-const p1 = characters.getCharacterShortName(settings.players[0].characterId!);
-const p2 = characters.getCharacterShortName(settings.players[1].characterId!);
-
-const jigglypuffs: PlayerType[] = settings.players.filter(playerIsJigglypuff);
 
 
 const player = settings.players[1]!
 const opponent = settings.players[0]!
+
+const p1 = characters.getCharacterShortName(settings.players[0].characterId!);
+const p2 = characters.getCharacterShortName(settings.players[1].characterId!);
+const p3 = characters.getCharacterShortName(settings.players[2].characterId!);
+const p4 = characters.getCharacterShortName(settings.players[3].characterId!);
+
+
+
 
 const stage = stages.getStageName(settings.stageId!);
 
@@ -45,6 +46,22 @@ const stats = game.getStats()!;
 // Get frames – animation state, inputs, etc
 // This is used to compute your own stats or get more frame-specific info (advanced)
 const allFrames = game.getFrames()!;
+
+
+
+// for (let i = 0; i < metadata.lastFrame!; i++) {
+//     let frame = allFrames[i]
+//     let info = "Frame " + i + ": "
+
+//     settings.players.forEach((player: PlayerType, index: number, array: PlayerType[]) => {
+//         let name = characters.getCharacterShortName(player.characterId!);
+//         let state = frame.players[index].post.actionStateId
+//         let percent = frame.players[index].pre.percent
+//         info = info + name + " state " + state + " " + percent + "%, "
+//     })
+//     console.log(info)
+// }
+
 
 type EventPredicate = (allFrames: FramesType, currentFrameIndex: number) => boolean;
 
@@ -73,12 +90,12 @@ function createDolphinDataFromFrames(frames: number[], leadingFrames: number = 1
         replay: '',
         isRealTimeMode: false,
         outputOverlayFiles: false,
-        queue: frames.map((frame: number): Clip => {
+        queue: frames.map((frame: number, index: number, array: number[]): Clip => {
             return {
                 // TODO: find a better way of inferring this path
-                path: process.env.BASE_DIR + '/test.slp',
+                path: process.env.BASE_DIR + "/" + filename,
                 startFrame: Math.max(frame - leadingFrames, -123),
-                endFrame: Math.min(frame + trailingFrames, metadata.lastFrame!),
+                endFrame: Math.min((frame - 0) + trailingFrames, metadata.lastFrame!),
                 // gameStartAt: "", // _.get(metadata, "startAt", ""),
                 // gameStation: "", // _.get(metadata, "consoleNick", ""),
                 // additional: {

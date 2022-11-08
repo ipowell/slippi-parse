@@ -18,3 +18,8 @@ To play a JSON file in Dolphin, run:
 ```
 
 In Linux, Dolphin is located by default at `~/.config/Slippi\ Launcher/playback/Slippi_Playback-x86_64.AppImage`. Note that you want the one in `Slippi Launcher/playback` and NOT `Slippi Launcher/netplay`.
+
+
+## Useful Links
+
+https://docs.google.com/spreadsheets/d/152A_UrA996o5VXveCkfJVPVuVBHP-90HxdkU72m0Ioc/edit#gid=13
