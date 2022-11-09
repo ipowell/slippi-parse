@@ -4,12 +4,18 @@ import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType, 
 import { OccurrenceFinder } from './utils';
 import { findRests } from './rests';
 import console = require('console');
-
+const testFolder = './resources/';
+const fs = require('fs');
 
 
 require('dotenv').config();
 
 const filename = "resources/doubles_puff.slp"
+
+// TODO: consider adding subdir support
+fs.readdirSync(testFolder).forEach(file => {
+    console.log(file);
+});
 
 const game = new SlippiGame(filename);
 
@@ -31,9 +37,6 @@ const p1 = characters.getCharacterShortName(settings.players[0].characterId!);
 const p2 = characters.getCharacterShortName(settings.players[1].characterId!);
 const p3 = characters.getCharacterShortName(settings.players[2].characterId!);
 const p4 = characters.getCharacterShortName(settings.players[3].characterId!);
-
-
-
 
 const stage = stages.getStageName(settings.stageId!);
 
