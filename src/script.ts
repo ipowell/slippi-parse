@@ -1,148 +1,58 @@
-import { writeFileSync } from 'fs';
+import { readdirSync, writeFileSync } from 'fs';
 
 import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType, PlayerType } from "@slippi/slippi-js";
-import { OccurrenceFinder } from './utils';
-import { findRests } from './rests';
+import { ClipFinder, printGame } from './utils';
+import { allRestAttempts, hitRests, passIntoRests } from './rests';
 import console = require('console');
-const testFolder = './resources/';
-const fs = require('fs');
+import { Dolphin, createDolphinDataFromFrames, writeDolphinFile, getQueueData } from './dolphin';
+import path = require('path');
+
+
 
 
 require('dotenv').config();
 
 const filename = "resources/doubles_puff.slp"
 
+// const testFolder = '/mnt/hdd/Development/slippi-parse/resources/'
+const testFolder = "/home/ian/hdd/games/recordings/Slippi/2022-11/"
+
 // TODO: consider adding subdir support
-fs.readdirSync(testFolder).forEach(file => {
-    console.log(file);
-});
-
-const game = new SlippiGame(filename);
-
-type Dolphin = {
-    mode: string,
-    replay: string,
-    isRealTimeMode: boolean,
-    outputOverlayFiles: boolean,
-    queue: Clip[],
-}
-
-const settings = game.getSettings()!;
-
-
-const player = settings.players[1]!
-const opponent = settings.players[0]!
-
-const p1 = characters.getCharacterShortName(settings.players[0].characterId!);
-const p2 = characters.getCharacterShortName(settings.players[1].characterId!);
-const p3 = characters.getCharacterShortName(settings.players[2].characterId!);
-const p4 = characters.getCharacterShortName(settings.players[3].characterId!);
-
-const stage = stages.getStageName(settings.stageId!);
-
-console.log(`This game is ${p1} vs ${p2} on ${stage}.`);
-
-const metadata = game.getMetadata()!;
-
-const stats = game.getStats()!;
-
-// Get frames – animation state, inputs, etc
-// This is used to compute your own stats or get more frame-specific info (advanced)
-const allFrames = game.getFrames()!;
+const files = readdirSync(testFolder).map((file) => testFolder + file)
+// const files = ["/home/ian/hdd/games/recordings/Slippi/2022-11/Game_20221105T041202.slp"]
 
 
 
-// for (let i = 0; i < metadata.lastFrame!; i++) {
-//     let frame = allFrames[i]
-//     let secondsElapsed = i / 60
-//     let minutesElapsed = Math.ceil(secondsElapsed / 60)
-//     let timeRemaining = (8 - minutesElapsed) + ":" + ((60 - secondsElapsed % 60) % 60).toPrecision(4)
-//     let info = "Frame " + i + " @ " + timeRemaining
-
-//     settings.players.forEach((player: PlayerType, index: number, array: PlayerType[]) => {
-//         let name = characters.getCharacterShortName(player.characterId!);
-//         let state = frame.players[index].post.actionStateId
-//         let percent = frame.players[index].pre.percent
-//         let lastHitBy = frame.players[index].post.lastHitBy
-
-//         info = info + ", " + name + " state " + state + " " + percent.toPrecision(3) + "% by " + lastHitBy
-//     })
-//     console.log(info)
-// }
-
-
-type EventPredicate = (allFrames: FramesType, currentFrameIndex: number) => boolean;
-
-function findOccurrences(test: EventPredicate): number[] {
-    let occurrenceFrames: number[] = []
-    for (let i = 0; i < metadata.lastFrame!; i++) {
-        if (test(allFrames, i)) {
-            occurrenceFrames.push(i);
-        }
-    }
-    return occurrenceFrames
-}
-
-type Clip = {
-    path: string,
-    startFrame: number,
-    endFrame: number,
-    gameStartAt: string,
-    // gameStation: string,
-    // additional: any,
-}
-
-function createDolphinDataFromFrames(frames: number[], leadingFrames: number = 180, trailingFrames: number = 240,): Dolphin {
-    return {
-        mode: 'queue',
-        replay: '',
-        isRealTimeMode: false,
-        outputOverlayFiles: false,
-        queue: frames.map((frame: number, index: number, array: number[]): Clip => {
-            return {
-                // TODO: find a better way of inferring this path
-                path: process.env.BASE_DIR + "/" + filename,
-                startFrame: Math.max(frame - leadingFrames, -123),
-                endFrame: Math.min((frame - 0) + trailingFrames, metadata.lastFrame!),
-                // gameStartAt: "", // _.get(metadata, "startAt", ""),
-                // gameStation: "", // _.get(metadata, "consoleNick", ""),
-                // additional: {
-                //     characterId: player.characterId,
-                //     opponentCharacterId: opponent.characterId,
-                // }
-                gameStartAt: "09/04/22 7:56 am",
-            }
-
-        }
-        )
-    };
-
-
-}
-
-function writeDolphinFile(dolphin: Dolphin, filename: string) {
-    let file = `output/${filename}.json`;
-    writeFileSync(file, JSON.stringify(dolphin))
-    console.log(`wrote file to ${file}`)
-}
-
-let restFinder: OccurrenceFinder = {
-    parser: findRests,
-    description: "landed rests",
-    filename: "landed_rests"
-}
-
-let occurrentFinders: OccurrenceFinder[] = [
-    restFinder
+const clipFinders: ClipFinder[] = [
+    new ClipFinder(
+        passIntoRests,
+        "passes into rest",
+        "pass_into_rest"
+    ),
+    new ClipFinder(
+        allRestAttempts,
+        "allRestAttempts",
+        "allRestAttempts"
+    ),
+    new ClipFinder(
+        hitRests,
+        "hitRests",
+        "hitRests"
+    ),
 ]
 
+let currentFileIndex = 1
+const totalFiles = files.length
 
-
-occurrentFinders.forEach((occurrence) => {
-    let frames = occurrence.parser(game)
-    console.log(`${occurrence.description} on frames ${frames}`)
-    writeDolphinFile(createDolphinDataFromFrames(frames), occurrence.filename);
+files.forEach((filename: string) => {
+    console.log("(" + currentFileIndex++ + "/" + totalFiles + "): " + filename)
+    const game = new SlippiGame(filename)
+    clipFinders.forEach((clipFinder) => {
+        clipFinder.parseGame(game)
+    });
 });
 
-
+clipFinders.forEach((clipFinder) => {
+    writeDolphinFile(createDolphinDataFromFrames(clipFinder.filename, clipFinder.clips), clipFinder.filename)
+});
 
