@@ -1,13 +1,10 @@
-import { readdirSync, writeFileSync } from 'fs';
+import { readdirSync } from 'fs';
 
-import { SlippiGame, characters, stages, isTeching, FrameEntryType, FramesType, PlayerType } from "@slippi/slippi-js";
+import { SlippiGame } from "@slippi/slippi-js";
 import { ClipFinder, printGame } from './utils';
 import { allRestAttempts, hitRests, passIntoRests } from './rests';
 import console = require('console');
-import { Dolphin, createDolphinDataFromFrames, writeDolphinFile, getQueueData } from './dolphin';
-import path = require('path');
-
-
+import { createDolphinDataFromFrames, writeDolphinFile } from './dolphin';
 
 
 require('dotenv').config();
@@ -26,17 +23,14 @@ const files = readdirSync(testFolder).map((file) => testFolder + file)
 const clipFinders: ClipFinder[] = [
     new ClipFinder(
         passIntoRests,
-        "passes into rest",
         "pass_into_rest"
     ),
     new ClipFinder(
         allRestAttempts,
-        "allRestAttempts",
         "allRestAttempts"
     ),
     new ClipFinder(
         hitRests,
-        "hitRests",
         "hitRests"
     ),
 ]

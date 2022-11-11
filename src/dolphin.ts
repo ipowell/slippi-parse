@@ -1,12 +1,5 @@
 import { SlippiGame } from "@slippi/slippi-js";
-import { spawn } from "child_process";
 import { writeFileSync } from "fs";
-import path = require("path");
-import { exit } from "process";
-
-const fsPromises = require("fs").promises
-
-
 
 
 export type Clip = {

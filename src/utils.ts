@@ -3,19 +3,17 @@ import { Clip, getQueueData } from "./dolphin";
 
 export type EventTest = (allFrames: FramesType, currentFrameIndex: number) => boolean;
 
+// Function that will 
 export type GameParser = (game: SlippiGame) => number[];
 
 export class ClipFinder {
     parser: GameParser
-    description: string
     filename: string
-    clips: Clip[] // file -> [frames]
+    clips: Clip[]
 
     constructor(parser: GameParser,
-        description: string,
         filename: string) {
         this.parser = parser
-        this.description = description
         this.filename = filename
         this.clips = []
     }
