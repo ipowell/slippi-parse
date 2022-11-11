@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "outDir": "generated/",
+        // "baseUrl": ".",
+        "outDir": "out/",
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true,
     }
 }
