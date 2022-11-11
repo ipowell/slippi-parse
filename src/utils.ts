@@ -3,7 +3,9 @@ import { Clip, getQueueData } from "./dolphin";
 
 export type EventTest = (allFrames: FramesType, currentFrameIndex: number) => boolean;
 
-// Function that will 
+// Function that will accept a `SlippiGame` as input and return a list of frames
+// from which to generate clips around.
+// TODO: return start/end frame tuples rather than just individual frames to pad on either side
 export type GameParser = (game: SlippiGame) => number[];
 
 export class ClipFinder {
@@ -18,7 +20,7 @@ export class ClipFinder {
         this.clips = []
     }
 
-    parseGame(game: SlippiGame) { // TODO: maybe get filename here
+    parseGame(game: SlippiGame) {
         const frames = this.parser(game)
         this.clips.push(...getQueueData(game.getFilePath(), game, frames))
     }
@@ -27,12 +29,6 @@ export class ClipFinder {
         return this.clips
     }
 }
-
-// export type OccurrenceFinder = {
-
-//     occurrences: Clip[],
-// }
-
 
 export function evaluateCandidates(allFrames: FramesType, candidates: number[], test: EventTest) {
     return candidates.filter(value => test(allFrames, value))

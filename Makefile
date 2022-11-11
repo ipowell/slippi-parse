@@ -15,10 +15,8 @@ run-js:
 play:
 	${DOLPHIN} -e ${MELEE} -i output/landed_rests.json
 
-args:
-	${DOLPHIN} -i output/all_rests.json -o output/000-unmerged.json \
-	--output-directory=output -b -e ${MELEE} -b --cout
-
+# depends on https://github.com/kevinsung/slp-to-video being
+# installed at the same level as this repo
 slp-to-video:
 	node ../slp-to-video/slp_to_video.js pass_into_rest.json \
 	--ssbm-iso-path=${MELEE}

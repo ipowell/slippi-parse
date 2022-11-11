@@ -12,6 +12,7 @@ const restStates = [
     371, // grounded facing right
     372, // airborne facing right
 ]
+
 export function isResting(frame: FrameEntryType, puff: PlayerType) {
     if (!isAlive(frame, puff)) {
         return false
