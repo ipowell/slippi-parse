@@ -1,4 +1,4 @@
-import { readdirSync } from 'fs';
+import { Dirent, readdirSync } from 'fs';
 
 import { SlippiGame } from "@slippi/slippi-js";
 import { ClipFinder, printGame } from './utils';
@@ -19,6 +19,15 @@ const files = readdirSync(testFolder).map((file) => testFolder + file)
 // const files = ["/home/ian/hdd/games/recordings/Slippi/2022-11/Game_20221105T041202.slp"]
 
 
+function getSlippiFilesFromDirectory(directory: string): string[] {
+    const contents = readdirSync(testFolder, { withFileTypes: true })
+    let slippiFiles = contents.filter((ent: Dirent) => ent.isFile() && ent.name.endsWith(".slp")).map((ent) => directory + "/" + ent.name)
+    contents.filter((ent: Dirent) => ent.isDirectory()).forEach((dir: Dirent) => {
+        slippiFiles.concat(getSlippiFilesFromDirectory(directory + "/" + dir.name))
+    })
+    return slippiFiles
+}
+
 
 const clipFinders: ClipFinder[] = [
     new ClipFinder(
@@ -36,9 +45,9 @@ const clipFinders: ClipFinder[] = [
 ]
 
 let currentFileIndex = 1
-const totalFiles = files.length
+const totalFiles = slippiFiles.length
 
-files.forEach((filename: string) => {
+slippiFiles.forEach((filename: string) => {
     console.log("(" + currentFileIndex++ + "/" + totalFiles + "): " + filename)
     const game = new SlippiGame(filename)
     clipFinders.forEach((clipFinder) => {
