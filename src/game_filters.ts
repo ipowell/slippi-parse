@@ -55,6 +55,10 @@ class GameConfig extends GameFilter {
     this.filters = [];
   }
 
+  add(...filters: GameFilter[]) {
+    filters.push(...filters);
+  }
+
   apply(game: SlippiGame): boolean {
     return this.filters.every((filter) => filter.apply(game));
   }
