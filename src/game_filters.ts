@@ -21,7 +21,7 @@ export abstract class GameFilter {
   }
 }
 
-class AndFilter extends GameFilter {
+export class AndFilter extends GameFilter {
   filters: GameFilter[];
 
   constructor(...filters: GameFilter[]) {
@@ -34,7 +34,7 @@ class AndFilter extends GameFilter {
   }
 }
 
-class OrFilter extends GameFilter {
+export class OrFilter extends GameFilter {
   filters: GameFilter[];
 
   constructor(...filters: GameFilter[]) {
@@ -47,7 +47,7 @@ class OrFilter extends GameFilter {
   }
 }
 
-class GameConfig extends GameFilter {
+export class GameConfig extends GameFilter {
   filters: GameFilter[];
 
   constructor() {
@@ -64,13 +64,13 @@ class GameConfig extends GameFilter {
   }
 }
 
-enum GameMode {
+export enum GameMode {
   Any,
   Singles,
   Teams,
 }
 
-class GameModeFilter extends GameFilter {
+export class GameModeFilter extends GameFilter {
   mode: GameMode;
   constructor(mode: GameMode) {
     super();
@@ -86,7 +86,7 @@ class GameModeFilter extends GameFilter {
   }
 }
 
-class ConnectCodeFilter extends GameFilter {
+export class ConnectCodeFilter extends GameFilter {
   connectCode: string;
 
   constructor(connectCode: string) {
@@ -103,7 +103,7 @@ class ConnectCodeFilter extends GameFilter {
   }
 }
 
-class PlayerFilter extends GameFilter {
+export class PlayerFilter extends GameFilter {
   character: number;
   tag: string;
 
@@ -118,7 +118,7 @@ class PlayerFilter extends GameFilter {
   }
 }
 
-class ConnectCodesOnTeamFilter extends GameFilter {
+export class ConnectCodesOnTeamFilter extends GameFilter {
   code1: string;
   code2: string;
 
@@ -141,7 +141,7 @@ class ConnectCodesOnTeamFilter extends GameFilter {
   }
 }
 
-class CharactersOnTeamFilter extends GameFilter {
+export class CharactersOnTeamFilter extends GameFilter {
   char1: Character;
   char2: Character;
 
@@ -176,7 +176,7 @@ class CharactersOnTeamFilter extends GameFilter {
   }
 }
 
-class StageFilter extends GameFilter {
+export class StageFilter extends GameFilter {
   stages: number[];
 
   constructor(...stages: number[]) {
