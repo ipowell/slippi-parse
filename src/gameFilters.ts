@@ -1,4 +1,4 @@
-import { Character, PlayerType, SlippiGame } from "@slippi/slippi-js";
+import { Character, PlayerType, SlippiGame, Stage } from "@slippi/slippi-js";
 // This file contains filters that are meant to filter at the game level.
 // This should be limited to game settings or metadata. The goal is to
 // prevent unnessecary parsing the file for combos.
@@ -47,23 +47,6 @@ export class OrFilter extends GameFilter {
   }
 }
 
-export class GameConfig extends GameFilter {
-  filters: GameFilter[];
-
-  constructor() {
-    super();
-    this.filters = [];
-  }
-
-  add(...filters: GameFilter[]) {
-    filters.push(...filters);
-  }
-
-  apply(game: SlippiGame): boolean {
-    return this.filters.every((filter) => filter.apply(game));
-  }
-}
-
 export enum GameMode {
   Any,
   Singles,
@@ -79,9 +62,9 @@ export class GameModeFilter extends GameFilter {
 
   apply(game: SlippiGame): boolean {
     return (
-      this.mode == GameMode.Any ||
-      (this.mode == GameMode.Singles && !game.getSettings().isTeams) ||
-      (this.mode == GameMode.Teams && game.getSettings().isTeams)
+      this.mode === GameMode.Any ||
+      (this.mode === GameMode.Singles && !game.getSettings().isTeams) ||
+      (this.mode === GameMode.Teams && game.getSettings().isTeams)
     );
   }
 }
@@ -98,23 +81,8 @@ export class ConnectCodeFilter extends GameFilter {
     return game
       .getSettings()
       .players.some(
-        (player: PlayerType) => player.connectCode == this.connectCode
+        (player: PlayerType) => player.connectCode === this.connectCode
       );
-  }
-}
-
-export class PlayerFilter extends GameFilter {
-  character: number;
-  tag: string;
-
-  constructor(character: number, tag: string) {
-    super();
-    this.character = character;
-    this.tag = tag;
-  }
-
-  apply(game: SlippiGame): boolean {
-    throw new Error("Method not implemented.");
   }
 }
 
@@ -124,6 +92,8 @@ export class ConnectCodesOnTeamFilter extends GameFilter {
 
   constructor(code1: string, code2: string) {
     super();
+    this.code1 = code1;
+    this.code2 = code2;
   }
 
   apply(game: SlippiGame): boolean {
@@ -131,12 +101,13 @@ export class ConnectCodesOnTeamFilter extends GameFilter {
       return false;
     }
     const players = game.getSettings().players;
-    const player1 = players.find((player) => player.connectCode == this.code1);
-    const player2 = players.find((player) => player.connectCode == this.code2);
+    const player1 = players.find((player) => player.connectCode === this.code1);
+    const player2 = players.find((player) => player.connectCode === this.code2);
+
     return (
-      player1 != undefined &&
-      player2 != undefined &&
-      player1.teamId == player2.teamId
+      player1 !== undefined &&
+      player2 !== undefined &&
+      player1.teamId === player2.teamId
     );
   }
 }
@@ -160,26 +131,21 @@ export class CharactersOnTeamFilter extends GameFilter {
     const char2Teams: number[] = [];
 
     game.getSettings().players.forEach((player) => {
-      if (player.characterId == this.char1.valueOf()) {
+      if (player.characterId === this.char1) {
         char1Teams.push(player.teamId);
-        if (char2Teams.includes(player.teamId)) {
-          return true;
-        }
-      } else if (player.characterId == this.char2.valueOf()) {
+      }
+      if (player.characterId === this.char2) {
         char2Teams.push(player.teamId);
-        if (char1Teams.includes(player.teamId)) {
-          return true;
-        }
       }
     });
-    return false;
+    return char1Teams.some((teamId) => char2Teams.includes(teamId));
   }
 }
 
 export class StageFilter extends GameFilter {
-  stages: number[];
+  stages: Stage[];
 
-  constructor(...stages: number[]) {
+  constructor(...stages: Stage[]) {
     super();
     this.stages = stages;
   }
@@ -188,3 +154,20 @@ export class StageFilter extends GameFilter {
     return this.stages.includes(game.getSettings().stageId);
   }
 }
+
+// export class GameConfig extends GameFilter {
+//   filters: GameFilter[];
+
+//   constructor() {
+//     super();
+//     this.filters = [];
+//   }
+
+//   add(...filters: GameFilter[]) {
+//     filters.push(...filters);
+//   }
+
+//   apply(game: SlippiGame): boolean {
+//     return this.filters.every((filter) => filter.apply(game));
+//   }
+// }
