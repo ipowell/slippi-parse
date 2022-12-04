@@ -20,21 +20,24 @@ export type Dolphin = {
     queue: Clip[],
 }
 
-export function getQueueData(file: string, game: SlippiGame, frames: number[], leadingFrames: number = 240, trailingFrames: number = 159,) {
-    return frames.map((frame: number, index: number, array: number[]): Clip => {
+export function getQueueData(file: string, game: SlippiGame, frames: [number, number][], leadingFrames: number = 60, trailingFrames: number = 60,) {
+    return frames.map((startAndEndFrames: [number, number]): Clip => {
+        const start = startAndEndFrames[0]
+        const end = startAndEndFrames[1]
+        const metadata = game.getMetadata()
         return {
             // TODO: find a better way of inferring this path
             path: file,
             // TODO: consider what to do if clips overlap
-            startFrame: Math.max(frame - leadingFrames, -123),
-            endFrame: Math.min((frame - 0) + trailingFrames, game.getMetadata().lastFrame!),
+            startFrame: Math.max(start - leadingFrames, -123),
+            endFrame: Math.min((end - 0) + trailingFrames, metadata.lastFrame!),
             // gameStartAt: "", // _.get(metadata, "startAt", ""),
             // gameStation: "", // _.get(metadata, "consoleNick", ""),
             // additional: {
             //     characterId: player.characterId,
             //     opponentCharacterId: opponent.characterId,
             // }
-            gameStartAt: "09/04/22 7:56 am",
+            gameStartAt: metadata.startAt,
         }
     })
 }
@@ -53,5 +56,5 @@ export function createDolphinDataFromFrames(outputPath: string, queue: Clip[], l
 export function writeDolphinFile(dolphin: Dolphin, filename: string) {
     let file = `output/${filename}.json`;
     writeFileSync(file, JSON.stringify(dolphin))
-    console.log(`wrote file to ${file}`)
+    console.log(`Wrote ${dolphin.queue.length} clips to ${file}.`)
 }

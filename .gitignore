@@ -18,6 +18,9 @@ public/css/main.css
 
 out
 
+# Created videos
+*.mp4
+
 # Coverage reports
 coverage
 
