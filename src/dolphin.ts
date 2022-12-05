@@ -33,7 +33,7 @@ export function getQueueData(
   return highlights.map((highlight: Highlight): Clip => {
     const start = highlight.startFrame;
     const end = highlight.endFrame;
-    const metadata = game.getMetadata();
+    const metadata = game.getMetadata()!;
     return {
       // TODO: find a better way of inferring this path
       path: file,
@@ -46,7 +46,7 @@ export function getQueueData(
       //     characterId: player.characterId,
       //     opponentCharacterId: opponent.characterId,
       // }
-      gameStartAt: metadata.startAt,
+      gameStartAt: metadata.startAt!,
     };
   });
 }
