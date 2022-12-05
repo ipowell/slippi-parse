@@ -69,7 +69,7 @@ export class ClipFinder {
     }
     this.clips.push(
       ...getQueueData(
-        game.getFilePath(),
+        game.getFilePath()!,
         game,
         frames,
         this.leadingFrames,
@@ -92,15 +92,15 @@ export function evaluateCandidates(
 }
 
 export function playerIsJigglypuff(player: PlayerType) {
-  return player.characterId == 15;
+  return player.characterId === 15;
 }
 
 export function playerIsCaptainFalcon(player: PlayerType) {
-  return player.characterId == 0;
+  return player.characterId === 0;
 }
 
 export function playerIsGanondorf(player: PlayerType) {
-  return player.characterId == 25;
+  return player.characterId === 25;
 }
 
 export function didHit(
@@ -111,7 +111,7 @@ export function didHit(
   return (
     isAlive(frame, attacker) &&
     isAlive(frame, attackee) &&
-    frame.players[attackee.playerIndex].post.lastHitBy == attacker.playerIndex
+    frame.players[attackee.playerIndex]!.post.lastHitBy === attacker.playerIndex
   );
 }
 
@@ -120,14 +120,7 @@ export function tookDamageThisFrame(
   frame: FrameEntryType,
   player: PlayerType
 ) {
-  const nextFrame = frames[frame.frame + 1];
-  if (nextFrame == null || nextFrame.players[player.playerIndex] == null) {
-    return false;
-  }
-
-  const currentFramePercent = frame.players[player.playerIndex].pre.percent;
-  const nextFramePercent = nextFrame.players[player.playerIndex].pre.percent;
-  return currentFramePercent < nextFramePercent;
+  return tookXDamageThisFrame(frames, frame, player, 1);
 }
 
 export function tookXDamageThisFrame(
@@ -137,12 +130,17 @@ export function tookXDamageThisFrame(
   damage: number
 ) {
   const nextFrame = frames[frame.frame + 1];
-  if (nextFrame == null || nextFrame.players[player.playerIndex] == null) {
+  if (
+    frame === null ||
+    frame.players[player.playerIndex] === null ||
+    nextFrame === null ||
+    nextFrame.players[player.playerIndex] === null
+  ) {
     return false;
   }
 
-  const currentFramePercent = frame.players[player.playerIndex].pre.percent;
-  const nextFramePercent = nextFrame.players[player.playerIndex].pre.percent;
+  const currentFramePercent = frame.players[player.playerIndex]!.pre.percent!;
+  const nextFramePercent = nextFrame.players[player.playerIndex]!.pre.percent!;
   return nextFramePercent >= currentFramePercent + damage;
 }
 
@@ -152,10 +150,10 @@ export function wasLastHitBy(
   attackee: PlayerType
 ) {
   const playerOnFrame = frame.players[attackee.playerIndex];
-  if (playerOnFrame == null) {
+  if (playerOnFrame === null) {
     return false;
   }
-  return playerOnFrame.post.lastHitBy == attacker.playerIndex;
+  return playerOnFrame.post.lastHitBy === attacker.playerIndex;
 }
 
 export function wasLastHitBySomeoneElse(
@@ -164,7 +162,7 @@ export function wasLastHitBySomeoneElse(
   attackee: PlayerType
 ) {
   const playerOnFrame = frame.players[attackee.playerIndex];
-  if (playerOnFrame == null) {
+  if (playerOnFrame === null) {
     return false;
   }
   return playerOnFrame.post.lastHitBy != attacker.playerIndex;
@@ -173,12 +171,12 @@ export function wasLastHitBySomeoneElse(
 export function isAlive(frame: FrameEntryType, player: PlayerType) {
   return (
     frame.players[player.playerIndex] != null &&
-    frame.players[player.playerIndex].post != null
+    frame.players[player.playerIndex]!.post != null
   );
 }
 
 export function printGame(game: SlippiGame) {
-  for (let i = 0; i < game.getMetadata().lastFrame!; i++) {
+  for (let i = 0; i < game.getMetadata()!.lastFrame!; i++) {
     let frame = game.getFrames()[i];
     let secondsElapsed = i / 60;
     let minutesElapsed = Math.ceil(secondsElapsed / 60);
@@ -190,14 +188,14 @@ export function printGame(game: SlippiGame) {
     let info = "Frame " + i + " @ " + timeRemaining;
 
     game
-      .getSettings()
+      .getSettings()!
       .players.forEach(
         (player: PlayerType, index: number, array: PlayerType[]) => {
           let name = characters.getCharacterShortName(player.characterId!);
           if (isAlive(frame, player)) {
-            let state = frame.players[index].post.actionStateId;
-            let percent = frame.players[index].pre.percent;
-            let lastHitBy = frame.players[index].post.lastHitBy;
+            let state = frame.players[index]!.post.actionStateId;
+            let percent = frame.players[index]!.pre.percent;
+            let lastHitBy = frame.players[index]!.post.lastHitBy;
             info =
               info +
               ", " +
@@ -205,7 +203,7 @@ export function printGame(game: SlippiGame) {
               " state " +
               state +
               " " +
-              percent.toPrecision(3) +
+              percent!.toPrecision(3) +
               "% by " +
               lastHitBy;
           } else {
@@ -218,14 +216,14 @@ export function printGame(game: SlippiGame) {
 }
 
 export function onTeams(player1: PlayerType, player2: PlayerType) {
-  return player1.teamId == player2.teamId;
+  return player1.teamId === player2.teamId;
 }
 
 export function getPlayerWithConnectCode(
   game: SlippiGame,
   code: string
-): PlayerType | null {
+): PlayerType | undefined {
   return game
-    .getSettings()
-    .players.find((player: PlayerType) => player.connectCode == code);
+    .getSettings()!
+    .players.find((player: PlayerType) => player.connectCode === code);
 }
