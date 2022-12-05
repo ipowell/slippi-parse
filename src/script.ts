@@ -5,8 +5,6 @@ import {
   getPlayerWithConnectCode,
   getSlippiFilesFromDirectory,
   Highlight,
-  playerIsCaptainFalcon,
-  playerIsJigglypuff,
   printGame,
 } from "./utils";
 import console = require("console");
