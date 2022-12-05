@@ -1,5 +1,4 @@
 import { FramesType, SlippiGame } from "@slippi/slippi-js";
-import { readdirSync, Dirent } from "fs";
 import { Clip, getQueueData } from "./dolphin";
 import { Heap } from "heap-js";
 
@@ -14,25 +13,7 @@ export type Highlight = {
   value?: number;
 };
 
-// Function that will accept a `SlippiGame` as input and return a list of frames
-// from which to generate clips around.
-// TODO: return start/end frame tuples rather than just individual frames to pad on either side
 export type GameParser = (game: SlippiGame) => Highlight[];
-
-export function getSlippiFilesFromDirectory(directory: string): string[] {
-  const contents = readdirSync(directory, { withFileTypes: true });
-  let slippiFiles = contents
-    .filter((ent: Dirent) => ent.isFile() && ent.name.endsWith(".slp"))
-    .map((ent) => directory + "/" + ent.name);
-  contents
-    .filter((ent: Dirent) => ent.isDirectory())
-    .forEach((dir: Dirent) => {
-      slippiFiles = slippiFiles.concat(
-        getSlippiFilesFromDirectory(directory + "/" + dir.name)
-      );
-    });
-  return slippiFiles;
-}
 
 export class ClipFinder {
   parser: GameParser;

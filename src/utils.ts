@@ -5,6 +5,22 @@ import {
   SlippiGame,
   characters,
 } from "@slippi/slippi-js";
+import { readdirSync, Dirent } from "fs";
+
+export function getSlippiFilesFromDirectory(directory: string): string[] {
+  const contents = readdirSync(directory, { withFileTypes: true });
+  let slippiFiles = contents
+    .filter((ent: Dirent) => ent.isFile() && ent.name.endsWith(".slp"))
+    .map((ent) => directory + "/" + ent.name);
+  contents
+    .filter((ent: Dirent) => ent.isDirectory())
+    .forEach((dir: Dirent) => {
+      slippiFiles = slippiFiles.concat(
+        getSlippiFilesFromDirectory(directory + "/" + dir.name)
+      );
+    });
+  return slippiFiles;
+}
 
 export function didHit(
   frame: FrameEntryType,

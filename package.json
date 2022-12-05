@@ -27,6 +27,11 @@
   "scripts": {
     "build": "tsc",
     "build-watch": "tsc -w",
-    "test": "jest --coverage ./test"
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/testUtils.ts"
+    ]
   }
 }
