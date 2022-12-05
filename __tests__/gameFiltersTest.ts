@@ -1,5 +1,5 @@
 jest.mock("@slippi/slippi-js");
-import { Character, SlippiGame, Stage } from "@slippi/slippi-js";
+import { Character, Stage } from "@slippi/slippi-js";
 import {
   AndFilter,
   CharactersOnTeamFilter,
@@ -15,20 +15,18 @@ import {
   createFakePlayer,
   createMockGetSettings,
   FalseFilter,
-  SlippiSettings,
+  game,
+  mockGame,
   TrueFilter,
+  withGameSettings,
 } from "./testUtils";
-var assert = require("assert");
-
-const game = new SlippiGame("");
-const mockGame = jest.mocked(game);
 
 function assertShouldMatch(filter: GameFilter) {
-  assert(filter.apply(game));
+  expect(filter.apply(game)).toBe(true);
 }
 
 function assertShouldFilter(filter: GameFilter) {
-  assert(!filter.apply(game));
+  expect(filter.apply(game)).toBe(false);
 }
 
 beforeEach(() => {
@@ -334,16 +332,12 @@ describe("CharactersOnTeamFilter", function () {
 describe("StageFilter", function () {
   const stageFilter = new StageFilter(Stage.CORNERIA, Stage.HOME_RUN_CONTEST);
   it("should pass if the stage is provided", function () {
-    withSettings({ stageId: Stage.CORNERIA });
+    withGameSettings({ stageId: Stage.CORNERIA });
     assertShouldMatch(stageFilter);
   });
 
   it("should fail if the stage is not provided", function () {
-    withSettings({ stageId: Stage.FOURSIDE });
+    withGameSettings({ stageId: Stage.FOURSIDE });
     assertShouldFilter(stageFilter);
   });
 });
-
-function withSettings(settings: SlippiSettings) {
-  createMockGetSettings(mockGame, settings);
-}

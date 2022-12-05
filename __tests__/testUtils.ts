@@ -7,6 +7,44 @@ import {
 } from "@slippi/slippi-js";
 import { GameFilter } from "../src/gameFilters";
 
+jest.mock("@slippi/slippi-js");
+
+export const game = new SlippiGame("");
+export const mockGame = jest.mocked(game);
+
+export enum MockMode {
+  Once,
+  All,
+}
+
+export function withGameSettings(settings: SlippiSettings) {
+  createMockGetSettings(mockGame, settings);
+}
+
+export function withGameFilepath(filepath: string, mode?: MockMode) {
+  if (mode === MockMode.Once) {
+    mockGame.getFilePath.mockReturnValueOnce(filepath);
+  } else {
+    mockGame.getFilePath.mockReturnValue(filepath);
+  }
+}
+
+export function withGameMetadata(params: {
+  startAt?: string;
+  playedOn?: string;
+  lastFrame?: number;
+  players?: any[];
+  consoleNick?: string;
+}) {
+  mockGame.getMetadata.mockReturnValue({
+    startAt: params.startAt ?? "",
+    playedOn: params.playedOn ?? "",
+    lastFrame: params.lastFrame ?? 48000,
+    players: params.players ?? null,
+    consoleNick: params.consoleNick ?? "",
+  });
+}
+
 export class TrueFilter extends GameFilter {
   apply(game: SlippiGame): boolean {
     return true;
@@ -34,17 +72,15 @@ export function createMockGetSettings(
   mockGame: jest.MockedObject<SlippiGame>,
   params: SlippiSettings
 ) {
-  mockGame.getSettings.mockImplementation(function (): GameStartType {
-    return {
-      slpVersion: params.slpVersion ?? "",
-      isTeams: params.isTeams ?? false,
-      isPAL: params.isPAL ?? false,
-      stageId: params.stageId ?? 1,
-      players: params.players ?? [],
-      scene: params.scene ?? 1,
-      gameMode: params.gameMode ?? GameMode.VS,
-      language: params.language ?? Language.ENGLISH,
-    };
+  mockGame.getSettings.mockReturnValue({
+    slpVersion: params.slpVersion ?? "",
+    isTeams: params.isTeams ?? false,
+    isPAL: params.isPAL ?? false,
+    stageId: params.stageId ?? 1,
+    players: params.players ?? [],
+    scene: params.scene ?? 1,
+    gameMode: params.gameMode ?? GameMode.VS,
+    language: params.language ?? Language.ENGLISH,
   });
 }
 

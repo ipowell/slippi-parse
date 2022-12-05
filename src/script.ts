@@ -1,15 +1,8 @@
 import { Character, MoveLandedType, SlippiGame } from "@slippi/slippi-js";
-import {
-  ClipFinder,
-  GameParser,
-  getPlayerWithConnectCode,
-  getSlippiFilesFromDirectory,
-  Highlight,
-  printGame,
-} from "./utils";
-import console = require("console");
+import { getSlippiFilesFromDirectory, printGame } from "./utils";
 import { createDolphinDataFromFrames, writeDolphinFile } from "./dolphin";
 import { twigTeamKills } from "./clipFinders/twigTeamKills";
+import { HighlightFinder } from "./highlights";
 
 require("dotenv").config();
 
@@ -19,8 +12,8 @@ const novemberGames = "/home/ian/hdd/games/recordings/Slippi/2022-10";
 const slippiFiles = getSlippiFilesFromDirectory(slippiFolder);
 // const slippiFiles = ["/home/ian/hdd/games/recordings/Slippi/2022-10/Game_20221001T155512.slp"]
 
-const clipFinders: ClipFinder[] = [
-  new ClipFinder(twigTeamKills, "twigTeamKills"),
+const highlightFinders: HighlightFinder[] = [
+  new HighlightFinder(twigTeamKills, "twigTeamKills"),
 ];
 
 let currentFileIndex = 1;
@@ -31,14 +24,17 @@ slippiFiles.forEach((filename: string) => {
   const game = new SlippiGame(filename);
 
   // printGame(game)
-  clipFinders.forEach((clipFinder) => {
-    clipFinder.parseGame(game);
+  highlightFinders.forEach((highlightFinder) => {
+    highlightFinder.parseGame(game);
   });
 });
 
-clipFinders.forEach((clipFinder) => {
+highlightFinders.forEach((highlightFinder) => {
   writeDolphinFile(
-    createDolphinDataFromFrames(clipFinder.filename, clipFinder.clips),
-    clipFinder.filename
+    createDolphinDataFromFrames(
+      highlightFinder.filename,
+      highlightFinder.getClips()
+    ),
+    highlightFinder.filename
   );
 });

@@ -1,5 +1,6 @@
 import { SlippiGame, ComboType } from "@slippi/slippi-js";
-import { GameParser, Highlight } from "../clips";
+import { GameParser } from "../highlights";
+import { Highlight } from "../highlights";
 import { getPlayerWithConnectCode } from "../utils";
 
 export const twigTeamKills: GameParser = (game: SlippiGame) => {
