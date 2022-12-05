@@ -1,6 +1,6 @@
 import { SlippiGame } from "@slippi/slippi-js";
 import { writeFileSync } from "fs";
-import { Highlight } from "./utils";
+import { Highlight } from "./clips";
 
 export type Clip = {
   path: string;
