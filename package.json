@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "@slippi/slippi-js": "6.3.0",
-    "dotenv": "^16.0.2"
+    "dotenv": "^16.0.2",
+    "heap-js": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",

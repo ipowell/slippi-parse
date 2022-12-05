@@ -7,6 +7,7 @@ import {
   characters,
 } from "@slippi/slippi-js";
 import { Dirent, readdirSync } from "fs";
+import { Heap } from "heap-js";
 
 import { Clip, getQueueData } from "./dolphin";
 
@@ -44,7 +45,7 @@ export function getSlippiFilesFromDirectory(directory: string): string[] {
 export class ClipFinder {
   parser: GameParser;
   filename: string;
-  clips: Clip[];
+  clips: Heap<Clip>;
   maxClips?: number;
   leadingFrames: number;
   trailingFrames: number;
@@ -57,7 +58,7 @@ export class ClipFinder {
   ) {
     this.parser = parser;
     this.filename = filename;
-    this.clips = [];
+    this.clips = new Heap(Heap.maxComparator);
     this.leadingFrames = leadingFrames;
     this.trailingFrames = trailingFrames;
   }
@@ -89,18 +90,6 @@ export function evaluateCandidates(
   test: EventTest
 ) {
   return candidates.filter((value) => test(allFrames, value));
-}
-
-export function playerIsJigglypuff(player: PlayerType) {
-  return player.characterId === 15;
-}
-
-export function playerIsCaptainFalcon(player: PlayerType) {
-  return player.characterId === 0;
-}
-
-export function playerIsGanondorf(player: PlayerType) {
-  return player.characterId === 25;
 }
 
 export function didHit(
