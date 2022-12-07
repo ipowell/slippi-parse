@@ -1,5 +1,5 @@
 jest.mock("@slippi/slippi-js");
-import { Character, Stage } from "@slippi/slippi-js";
+import { Character, SlippiGame, Stage } from "@slippi/slippi-js";
 import {
   AndFilter,
   CharactersOnTeamFilter,
@@ -11,13 +11,7 @@ import {
   OrFilter,
   StageFilter,
 } from "../src/gameFilters";
-import {
-  createFakePlayer,
-  FalseFilter,
-  game,
-  TrueFilter,
-  withGameSettings,
-} from "./testUtils";
+import { createFakePlayer, game, withGameSettings } from "./testUtils";
 
 function assertShouldMatch(filter: GameFilter) {
   expect(filter.apply(game)).toBe(true);
@@ -30,6 +24,18 @@ function assertShouldFilter(filter: GameFilter) {
 beforeEach(() => {
   jest.resetModules();
 });
+
+class TrueFilter extends GameFilter {
+  apply(_game: SlippiGame): boolean {
+    return true;
+  }
+}
+
+class FalseFilter extends GameFilter {
+  apply(_game: SlippiGame): boolean {
+    return false;
+  }
+}
 
 const trueFilter = new TrueFilter();
 const falseFilter = new FalseFilter();

@@ -36,18 +36,6 @@ export function withGameMetadata(params: {
   });
 }
 
-export class TrueFilter extends GameFilter {
-  apply(game: SlippiGame): boolean {
-    return true;
-  }
-}
-
-export class FalseFilter extends GameFilter {
-  apply(game: SlippiGame): boolean {
-    return false;
-  }
-}
-
 export type SlippiSettings = {
   isTeams?: any;
   players?: any;
