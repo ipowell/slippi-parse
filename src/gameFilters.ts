@@ -148,20 +148,3 @@ export class StageFilter extends GameFilter {
     return this.stages.includes(game.getSettings().stageId);
   }
 }
-
-// export class GameConfig extends GameFilter {
-//   filters: GameFilter[];
-
-//   constructor() {
-//     super();
-//     this.filters = [];
-//   }
-
-//   add(...filters: GameFilter[]) {
-//     filters.push(...filters);
-//   }
-
-//   apply(game: SlippiGame): boolean {
-//     return this.filters.every((filter) => filter.apply(game));
-//   }
-// }

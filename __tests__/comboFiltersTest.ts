@@ -8,6 +8,7 @@ import {
   NumberOfHitsFilter,
   OrFilter,
 } from "../src/comboFilters";
+import { mockGame } from "./testUtils";
 
 type ComboParams = {
   playerIndex?: number;
@@ -34,11 +35,11 @@ function comboWithParams(params: ComboParams) {
 }
 
 function assertShouldMatch(filter: ComboFilter, combo: ComboType) {
-  expect(filter.apply(combo)).toBe(true);
+  expect(filter.apply(combo, mockGame)).toBe(true);
 }
 
 function assertShouldFilter(filter: ComboFilter, combo: ComboType) {
-  expect(filter.apply(combo)).toBe(false);
+  expect(filter.apply(combo, mockGame)).toBe(false);
 }
 
 beforeEach(() => {
@@ -164,4 +165,8 @@ describe("KilledFilter", function () {
     assertShouldMatch(new KilledFilter(), killingCombo);
     assertShouldFilter(new KilledFilter(), fleshWoundingCombo);
   });
+});
+
+describe("ComboPerformerFilter", function () {
+  // TODO: implement this
 });

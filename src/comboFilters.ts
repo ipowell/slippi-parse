@@ -1,7 +1,7 @@
-import { ComboType } from "@slippi/slippi-js";
+import { Character, ComboType, SlippiGame } from "@slippi/slippi-js";
 
 export abstract class ComboFilter {
-  abstract apply(combo: ComboType): boolean;
+  abstract apply(combo: ComboType, game: SlippiGame): boolean;
 
   and(...filters: ComboFilter[]): AndFilter {
     return new AndFilter(this, ...filters);
@@ -20,8 +20,8 @@ export class AndFilter extends ComboFilter {
     this.filters = filters;
   }
 
-  apply(combo: ComboType): boolean {
-    return this.filters.every((filter) => filter.apply(combo));
+  apply(combo: ComboType, game: SlippiGame): boolean {
+    return this.filters.every((filter) => filter.apply(combo, game));
   }
 }
 
@@ -33,8 +33,8 @@ export class OrFilter extends ComboFilter {
     this.filters = filters;
   }
 
-  apply(combo: ComboType): boolean {
-    return this.filters.some((filter) => filter.apply(combo));
+  apply(combo: ComboType, game: SlippiGame): boolean {
+    return this.filters.some((filter) => filter.apply(combo, game));
   }
 }
 
@@ -46,7 +46,7 @@ export class DamageFilter extends ComboFilter {
     this.threshold = threshold;
   }
 
-  apply(combo: ComboType): boolean {
+  apply(combo: ComboType, _game: SlippiGame): boolean {
     return combo.endPercent - combo.startPercent >= this.threshold;
   }
 }
@@ -59,7 +59,7 @@ export class NumberOfHitsFilter extends ComboFilter {
     this.threshold = threshold;
   }
 
-  apply(combo: ComboType): boolean {
+  apply(combo: ComboType, _game: SlippiGame): boolean {
     return combo.moves.length >= this.threshold;
   }
 }
@@ -72,7 +72,23 @@ export class KilledFilter extends ComboFilter {
     this.didKill = didKill ?? true;
   }
 
-  apply(combo: ComboType): boolean {
+  apply(combo: ComboType, _game: SlippiGame): boolean {
     return combo.didKill === this.didKill;
+  }
+}
+
+export class ComboPerformerFilter extends ComboFilter {
+  character: Character;
+
+  constructor(character: Character) {
+    super();
+    this.character = character;
+  }
+
+  apply(combo: ComboType, game: SlippiGame): boolean {
+    return (
+      game.getSettings().players[combo.playerIndex].characterId ===
+      this.character
+    );
   }
 }
