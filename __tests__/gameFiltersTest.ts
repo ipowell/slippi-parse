@@ -13,10 +13,8 @@ import {
 } from "../src/gameFilters";
 import {
   createFakePlayer,
-  createMockGetSettings,
   FalseFilter,
   game,
-  mockGame,
   TrueFilter,
   withGameSettings,
 } from "./testUtils";
@@ -82,12 +80,12 @@ describe("GameModeFilter", function () {
   describe("Singles", function () {
     const singlesFilter = new GameModeFilter(GameMode.Singles);
     it("should pass for singles", function () {
-      createMockGetSettings(mockGame, { isTeams: false });
+      withGameSettings({ isTeams: false });
       assertShouldMatch(singlesFilter);
     });
 
     it("should fail for teams", function () {
-      createMockGetSettings(mockGame, { isTeams: true });
+      withGameSettings({ isTeams: true });
       assertShouldFilter(singlesFilter);
     });
   });
@@ -95,12 +93,12 @@ describe("GameModeFilter", function () {
   describe("Teams", function () {
     const teamsFilter = new GameModeFilter(GameMode.Teams);
     it("should pass for teams", function () {
-      createMockGetSettings(mockGame, { isTeams: true });
+      withGameSettings({ isTeams: true });
       assertShouldMatch(teamsFilter);
     });
 
     it("should fail for singles", function () {
-      createMockGetSettings(mockGame, { isTeams: false });
+      withGameSettings({ isTeams: false });
       assertShouldFilter(teamsFilter);
     });
   });
@@ -108,12 +106,12 @@ describe("GameModeFilter", function () {
   describe("Any", function () {
     const anyModeFilter = new GameModeFilter(GameMode.Any);
     it("should pass for singles", function () {
-      createMockGetSettings(mockGame, { isTeams: false });
+      withGameSettings({ isTeams: false });
       assertShouldMatch(anyModeFilter);
     });
 
     it("should pass for teams", function () {
-      createMockGetSettings(mockGame, { isTeams: true });
+      withGameSettings({ isTeams: true });
       assertShouldMatch(anyModeFilter);
     });
   });
@@ -124,14 +122,14 @@ describe("ConnectCodeFilter", function () {
   const connectCodeFilter = new ConnectCodeFilter(testCode);
 
   it("should pass when a player with the connect code exists", function () {
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       players: [createFakePlayer({ connectCode: testCode })],
     });
     assertShouldMatch(connectCodeFilter);
   });
 
   it("should fail when a player with the connect code does not exist", function () {
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       players: [createFakePlayer({ connectCode: "NOTME#0" })],
     });
     assertShouldFilter(connectCodeFilter);
@@ -147,7 +145,7 @@ describe("ConnectCodesOnTeamFilter", function () {
   );
 
   it("should fail if it is not a teams game", function () {
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: false,
       players: [
         createFakePlayer({ connectCode: teammate1Code, teamId: 1 }),
@@ -158,7 +156,7 @@ describe("ConnectCodesOnTeamFilter", function () {
   });
 
   it("should pass when the players are on the same team", function () {
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: true,
       players: [
         createFakePlayer({ connectCode: teammate1Code, teamId: 0 }),
@@ -171,7 +169,7 @@ describe("ConnectCodesOnTeamFilter", function () {
   });
 
   it("should fail when a players are on different teams", function () {
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: true,
       players: [
         createFakePlayer({ connectCode: teammate1Code, teamId: 0 }),
@@ -184,7 +182,7 @@ describe("ConnectCodesOnTeamFilter", function () {
   });
 
   it("should fail when not both players are playing", function () {
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: true,
       players: [
         createFakePlayer({ connectCode: teammate1Code, teamId: 0 }),
@@ -203,7 +201,7 @@ describe("CharactersOnTeamFilter", function () {
       Character.BOWSER,
       Character.DONKEY_KONG
     );
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: false,
       players: [
         createFakePlayer({
@@ -225,7 +223,7 @@ describe("CharactersOnTeamFilter", function () {
         Character.BOWSER,
         Character.DONKEY_KONG
       );
-      createMockGetSettings(mockGame, {
+      withGameSettings({
         isTeams: true,
         players: [
           createFakePlayer({
@@ -254,7 +252,7 @@ describe("CharactersOnTeamFilter", function () {
         Character.BOWSER,
         Character.BOWSER
       );
-      createMockGetSettings(mockGame, {
+      withGameSettings({
         isTeams: true,
         players: [
           createFakePlayer({
@@ -281,7 +279,7 @@ describe("CharactersOnTeamFilter", function () {
       Character.BOWSER,
       Character.DONKEY_KONG
     );
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: true,
       players: [
         createFakePlayer({
@@ -307,7 +305,7 @@ describe("CharactersOnTeamFilter", function () {
       Character.BOWSER,
       Character.DONKEY_KONG
     );
-    createMockGetSettings(mockGame, {
+    withGameSettings({
       isTeams: true,
       players: [
         createFakePlayer({

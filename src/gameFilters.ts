@@ -3,8 +3,6 @@ import { Character, PlayerType, SlippiGame, Stage } from "@slippi/slippi-js";
 // This should be limited to game settings or metadata. The goal is to
 // prevent unnessecary parsing the file for combos.
 
-// TODO: support ORs somehow
-
 export abstract class GameFilter {
   abstract apply(game: SlippiGame): boolean;
 
@@ -14,10 +12,6 @@ export abstract class GameFilter {
 
   or(...filters: GameFilter[]): OrFilter {
     return new OrFilter(this, ...filters);
-  }
-
-  negate() {
-    // can/should we do this?
   }
 }
 

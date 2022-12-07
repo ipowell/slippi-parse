@@ -12,21 +12,12 @@ jest.mock("@slippi/slippi-js");
 export const game = new SlippiGame("");
 export const mockGame = jest.mocked(game);
 
-export enum MockMode {
-  Once,
-  All,
-}
-
 export function withGameSettings(settings: SlippiSettings) {
-  createMockGetSettings(mockGame, settings);
+  mockGame.getSettings.mockReturnValue(createFakeSettings(settings));
 }
 
-export function withGameFilepath(filepath: string, mode?: MockMode) {
-  if (mode === MockMode.Once) {
-    mockGame.getFilePath.mockReturnValueOnce(filepath);
-  } else {
-    mockGame.getFilePath.mockReturnValue(filepath);
-  }
+export function withGameFilepath(filepath: string) {
+  mockGame.getFilePath.mockReturnValue(filepath);
 }
 
 export function withGameMetadata(params: {
@@ -68,11 +59,8 @@ export type SlippiSettings = {
   language?: any;
 };
 
-export function createMockGetSettings(
-  mockGame: jest.MockedObject<SlippiGame>,
-  params: SlippiSettings
-) {
-  mockGame.getSettings.mockReturnValue({
+export function createFakeSettings(params: SlippiSettings) {
+  return {
     slpVersion: params.slpVersion ?? "",
     isTeams: params.isTeams ?? false,
     isPAL: params.isPAL ?? false,
@@ -81,8 +69,17 @@ export function createMockGetSettings(
     scene: params.scene ?? 1,
     gameMode: params.gameMode ?? GameMode.VS,
     language: params.language ?? Language.ENGLISH,
-  });
+  };
 }
+
+// export function createMockGetSettings(params: SlippiSettings) {
+// const returnValue = ;
+// if (mode === MockMode.Once) {
+// mockGame.getSettings.mockReturnValueOnce(returnValue);
+// } else {
+// mockGame.getSettings.mockReturnValue(returnValue);
+// }
+// }
 
 export type FakePlayerParams = {
   connectCode?: any;

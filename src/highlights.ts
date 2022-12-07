@@ -27,7 +27,6 @@ export class HighlightFinder {
   parser: GameParser;
   filename: string;
   clips: Heap<Clip>;
-  maxHighlights?: number;
   leadingFrames: number;
   trailingFrames: number;
 
@@ -39,13 +38,14 @@ export class HighlightFinder {
     parser: GameParser,
     filename: string,
     leadingFrames: number = 240,
-    trailingFrames: number = 159
+    trailingFrames: number = 120,
+    maxHighlights?: number
   ) {
     this.parser = parser;
     this.filename = filename;
     this.clips = new Heap(this.customPriorityComparator);
-    if (this.maxHighlights !== undefined) {
-      this.clips.limit = this.maxHighlights;
+    if (maxHighlights !== undefined) {
+      this.clips.limit = maxHighlights;
     }
     this.leadingFrames = leadingFrames;
     this.trailingFrames = trailingFrames;
@@ -53,6 +53,7 @@ export class HighlightFinder {
 
   parseGame(game: SlippiGame) {
     const highlightEndpoints: Highlight[] = this.parser(game);
+    /* istanbul ignore next */
     if (highlightEndpoints.length > 0) {
       console.log(
         "Found " +
@@ -77,12 +78,4 @@ export class HighlightFinder {
   getClips(): Clip[] {
     return this.clips.heapArray;
   }
-}
-
-export function evaluateCandidates(
-  allFrames: FramesType,
-  candidates: number[],
-  test: EventTest
-) {
-  return candidates.filter((value) => test(allFrames, value));
 }
