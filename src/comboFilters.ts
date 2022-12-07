@@ -77,7 +77,7 @@ export class KilledFilter extends ComboFilter {
   }
 }
 
-export class ComboPerformerFilter extends ComboFilter {
+export class ComboPerformerCharacterFilter extends ComboFilter {
   character: Character;
 
   constructor(character: Character) {
@@ -89,6 +89,22 @@ export class ComboPerformerFilter extends ComboFilter {
     return (
       game.getSettings().players[combo.playerIndex].characterId ===
       this.character
+    );
+  }
+}
+
+export class ComboPerformerConnectCodeFilter extends ComboFilter {
+  connectCode: string;
+
+  constructor(connectCode: string) {
+    super();
+    this.connectCode = connectCode;
+  }
+
+  apply(combo: ComboType, game: SlippiGame): boolean {
+    return (
+      game.getSettings().players[combo.playerIndex].connectCode ===
+      this.connectCode
     );
   }
 }

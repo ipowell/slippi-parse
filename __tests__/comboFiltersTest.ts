@@ -167,6 +167,10 @@ describe("KilledFilter", function () {
   });
 });
 
-describe("ComboPerformerFilter", function () {
+describe("ComboPerformerCharacterFilter", function () {
+  // TODO: implement this
+});
+
+describe("ComboPerformerConnectCodeFilter", function () {
   // TODO: implement this
 });
