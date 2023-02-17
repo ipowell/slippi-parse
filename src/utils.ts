@@ -1,4 +1,5 @@
 import {
+  Character,
   FrameEntryType,
   FramesType,
   PlayerType,
@@ -145,4 +146,12 @@ export function getPlayerWithConnectCode(
   return game
     .getSettings()!
     .players.find((player: PlayerType) => player.connectCode === code);
+}
+
+export function playerIsCharacter(
+  game: SlippiGame,
+  player: PlayerType,
+  character: Character
+): boolean {
+  return player.characterId === character;
 }
