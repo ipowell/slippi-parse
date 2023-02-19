@@ -124,7 +124,7 @@ export const peachCharacterData: CharacterDataType = {
         [36, 37],
       ],
       iasaFrame: 38,
-      shieldStun: 8,
+      shieldStun: 3,
       baseDamageHigh: 3, // per hit, idk what to do with this. I think not actually useful
       baseDamageLow: 3, // per hit
       framesLandingLag: landingLagNormalFrames,
