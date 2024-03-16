@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "script.ts",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/script.ts",
+      "program": "${file}",
       "outFiles": ["${workspaceFolder}/out/**/*.js"],
       "preLaunchTask": "tsc: build - tsconfig.json",
       "runtimeArgs": ["--preserve-symlinks"]
@@ -17,9 +17,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Stock Lead",
+      "name": "Percentage Finder",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/clipFinders/stockLoss.ts",
+      "program": "${workspaceFolder}/src/stockLead/percentageFinder.ts",
       "outFiles": ["${workspaceFolder}/out/**/*.js"],
       "preLaunchTask": "tsc: build - tsconfig.json",
       "runtimeArgs": ["--preserve-symlinks"]

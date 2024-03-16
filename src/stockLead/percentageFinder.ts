@@ -1,4 +1,4 @@
-import stockData from "../../stockData.json";
+import stockData from "./stockData.json";
 
 function createEmptyPercentageResults(): String[][] {
   return [
@@ -29,4 +29,5 @@ const falcoWins = stockData.Falco.Peach;
 const peachWins = stockData.Peach.Falco;
 
 const percents = findPercentages(falcoWins, peachWins);
+
 console.log(percents);

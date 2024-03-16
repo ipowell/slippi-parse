@@ -57,6 +57,26 @@ export function createFakeSettings(params: SlippiSettings) {
     scene: params.scene ?? 1,
     gameMode: params.gameMode ?? GameMode.VS,
     language: params.language ?? Language.ENGLISH,
+    // added
+    timerType: null,
+    inGameMode: null,
+    friendlyFireEnabled: true,
+    startingTimerSeconds: null,
+    itemSpawnBehavior: null,
+    enabledItems: null,
+    gameInfoBlock: null,
+    randomSeed: null,
+    isFrozenPS: null,
+    // timerType: TimerType | null;
+    // inGameMode: number | null;
+    // friendlyFireEnabled: boolean | null;
+    // startingTimerSeconds: number | null;
+    // itemSpawnBehavior: ItemSpawnType | null;
+    // enabledItems: number | null;
+    // gameInfoBlock: GameInfoType | null;
+    // randomSeed: number | null;
+    // isPAL: boolean | null;
+    // isFrozenPS: boolean | null;
   };
 }
 
@@ -98,5 +118,36 @@ export function createFakePlayer(params: FakePlayerParams): PlayerType {
     displayName: params.displayName ?? "displayName",
     connectCode: params.connectCode ?? "connectCode",
     userId: params.userId ?? "userId",
+
+    // added
+    teamShade: null,
+    handicap: null,
+    staminaMode: null,
+    silentCharacter: null,
+    invisible: null,
+    lowGravity: null,
+    blackStockIcon: null,
+    metal: null,
+    startOnAngelPlatform: null,
+    rumbleEnabled: null,
+    cpuLevel: null,
+    offenseRatio: null,
+    defenseRatio: null,
+    modelScale: null,
+
+    // teamShade: number | null;
+    // handicap: number | null;
+    // staminaMode: boolean | null;
+    // silentCharacter: boolean | null;
+    // invisible: boolean | null;
+    // lowGravity: boolean | null;
+    // blackStockIcon: boolean | null;
+    // metal: boolean | null;
+    // startOnAngelPlatform: boolean | null;
+    // rumbleEnabled: boolean | null;
+    // cpuLevel: number | null;
+    // offenseRatio: number | null;
+    // defenseRatio: number | null;
+    // modelScale: number | null;
   };
 }
