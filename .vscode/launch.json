@@ -1,24 +1,28 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/src/script.ts",
-            "outFiles": [
-                "${workspaceFolder}/out/**/*.js"
-            ],
-            "preLaunchTask": "tsc: build - tsconfig.json",
-            "runtimeArgs": [
-                "--preserve-symlinks"
-            ],
-        },
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "script.ts",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${file}",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "runtimeArgs": ["--preserve-symlinks"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Percentage Finder",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/stockLead/percentageFinder.ts",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "runtimeArgs": ["--preserve-symlinks"]
+    }
+  ]
 }
