@@ -253,7 +253,7 @@ describe("CharactersOnTeamFilter", function () {
       assertShouldMatch(differentCharactersOnTeamFilter);
     });
 
-    it("even if both characters are the same", function () {
+    it("should pass if both characters are the same", function () {
       const sameCharactersOnTeamFilter = new CharactersOnTeamFilter(
         Character.BOWSER,
         Character.BOWSER
@@ -265,7 +265,10 @@ describe("CharactersOnTeamFilter", function () {
             characterId: Character.BOWSER,
             teamId: 0,
           }),
-          createFakePlayer({ characterId: Character.BOWSER, teamId: 0 }),
+          createFakePlayer({
+            characterId: Character.BOWSER,
+            teamId: 0,
+          }),
           createFakePlayer({
             characterId: Character.WIREFRAME_MALE,
             teamId: 1,
@@ -280,6 +283,35 @@ describe("CharactersOnTeamFilter", function () {
     });
   });
 
+  it("should fail in this case", function () {
+    const charactersOnTeamFilter = new CharactersOnTeamFilter(
+      Character.BOWSER,
+      Character.BOWSER
+    );
+    withGameSettings({
+      isTeams: true,
+      players: [
+        createFakePlayer({
+          characterId: Character.BOWSER,
+          teamId: 0,
+        }),
+        createFakePlayer({
+          characterId: Character.GANONDORF,
+          teamId: 0,
+        }),
+        createFakePlayer({
+          characterId: Character.DONKEY_KONG,
+          teamId: 1,
+        }),
+        createFakePlayer({
+          characterId: Character.WIREFRAME_FEMALE,
+          teamId: 1,
+        }),
+      ],
+    });
+    assertShouldFilter(charactersOnTeamFilter);
+  });
+
   it("should fail when the characters are on different teams", function () {
     const charactersOnTeamFilter = new CharactersOnTeamFilter(
       Character.BOWSER,
@@ -292,7 +324,10 @@ describe("CharactersOnTeamFilter", function () {
           characterId: Character.BOWSER,
           teamId: 0,
         }),
-        createFakePlayer({ characterId: Character.CRAZY_HAND, teamId: 0 }),
+        createFakePlayer({
+          characterId: Character.CRAZY_HAND,
+          teamId: 0,
+        }),
         createFakePlayer({
           characterId: Character.DONKEY_KONG,
           teamId: 1,
@@ -318,7 +353,10 @@ describe("CharactersOnTeamFilter", function () {
           characterId: Character.MASTER_HAND,
           teamId: 0,
         }),
-        createFakePlayer({ characterId: Character.CRAZY_HAND, teamId: 0 }),
+        createFakePlayer({
+          characterId: Character.CRAZY_HAND,
+          teamId: 0,
+        }),
         createFakePlayer({
           characterId: Character.WIREFRAME_MALE,
           teamId: 1,
